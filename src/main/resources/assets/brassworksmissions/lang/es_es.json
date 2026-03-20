@@ -54,6 +54,8 @@
   "gui.brassworksmissions.error.cost_cap_reached": "Llegaste al limite de cambio de 32 %s. Esta mision ya no puede ser cambiada.",
   "gui.brassworksmissions.error.not_enough": "Necesitas %s %s para cambiar esta mision.",
   "gui.brassworksmissions.success.rerolled": "Mision cambiada por %s %s.",
+  "gui.brassworksmissions.tooltip.cost_free": "Precio: Gratis",
+  "gui.brassworksmissions.success.rerolled_free": "Mision cambiada gratis.",
 
   "mission.brassworksmissions.prefix.punctuation": ": ",
 

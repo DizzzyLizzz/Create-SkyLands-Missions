@@ -54,6 +54,8 @@
   "gui.brassworksmissions.error.cost_cap_reached": "你的重刷花费已达到上限 32 %s。你无法再重刷。",
   "gui.brassworksmissions.error.not_enough": "你需要 %s %s 才能重刷此任务。",
   "gui.brassworksmissions.success.rerolled": "花费 %s %s 重刷了任务。",
+  "gui.brassworksmissions.tooltip.cost_free": "花费：免费",
+  "gui.brassworksmissions.success.rerolled_free": "免费重刷了任务。",
 
   "mission.brassworksmissions.prefix.punctuation": ": ",
 

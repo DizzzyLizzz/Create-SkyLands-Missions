@@ -54,6 +54,8 @@
   "gui.brassworksmissions.error.cost_cap_reached": "Цена запроса достигла ограничения в 32 %s; дальнейшие запросы будут отклонены",
   "gui.brassworksmissions.error.not_enough": "Для запроса другого поручения требуется %s %s",
   "gui.brassworksmissions.success.rerolled": "Запрос другого поручения за %s %s одобрен",
+  "gui.brassworksmissions.tooltip.cost_free": "Цена: Бесплатно",
+  "gui.brassworksmissions.success.rerolled_free": "Запрос другого поручения бесплатно одобрен",
 
   "mission.brassworksmissions.prefix.punctuation": " ",
 

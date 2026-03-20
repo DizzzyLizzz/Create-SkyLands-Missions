@@ -172,38 +172,48 @@ public class UiScreen extends AbstractContainerScreen<UiMenu> {
 
         if (rerollButton != null && rerollButton.isMouseOver(mouseX, mouseY)) {
             var playerVariables = entity.getData(BrassworksmissionsModVariables.PLAYER_VARIABLES);
-            int rerollCost = playerVariables.reRollAmount * 2;
-            int cappedCost = Math.min(rerollCost, 32);
+
+            int rerollCost = 0;
+            if (playerVariables.reRollAmount > 2) {
+                rerollCost = (playerVariables.reRollAmount - 2) * 2;
+            }
+
             List<Component> tip = new ArrayList<>();
             tip.add(Component.translatable("gui.brassworksmissions.tooltip.reroll_mission")
                     .setStyle(Style.EMPTY.withColor(TextColor.fromRgb(MissionUIHelper.TOOLTIP_HEADER_COLOR))));
-            Item rerollitem = rewardStack.getItem();
-            ItemStack rerollstack = new ItemStack(rerollitem);
-            Component costPrefix = Component.translatable(
-                    "gui.brassworksmissions.tooltip.cost_prefix", cappedCost
-            ).setStyle(Style.EMPTY.withColor(TextColor.fromRgb(MissionUIHelper.TOOLTIP_TEXT_COLOR)));
 
-            Component costItem = rerollstack.getHoverName()
-                    .copy()
-                    .setStyle(Style.EMPTY.withColor(TextColor.fromRgb(MissionUIHelper.REWARD_ITEM_COLOR)))
-                    .append(Component.translatable("gui.brassworksmissions.ui.plural_format"));
+            if (rerollCost == 0) {
+                tip.add(Component.translatable("gui.brassworksmissions.tooltip.cost_free")
+                        .setStyle(Style.EMPTY.withColor(TextColor.fromRgb(MissionUIHelper.TOOLTIP_TEXT_COLOR))));
+            } else {
+                Item rerollitem = rewardStack.getItem();
+                ItemStack rerollstack = new ItemStack(rerollitem);
+                Component costPrefix = Component.translatable(
+                        "gui.brassworksmissions.tooltip.cost_prefix", rerollCost
+                ).setStyle(Style.EMPTY.withColor(TextColor.fromRgb(MissionUIHelper.TOOLTIP_TEXT_COLOR)));
 
-            tip.add(costPrefix.copy().append(costItem));
+                Component costItem = rerollstack.getHoverName()
+                        .copy()
+                        .setStyle(Style.EMPTY.withColor(TextColor.fromRgb(MissionUIHelper.REWARD_ITEM_COLOR)))
+                        .append(Component.translatable("gui.brassworksmissions.ui.plural_format"));
 
-            tip.add(Component.translatable(
-                    "gui.brassworksmissions.tooltip.cost_cap", rerollstack.getHoverName()
-                            .copy()
-                            .append(Component.translatable("gui.brassworksmissions.ui.plural_format"))
-            ).setStyle(Style.EMPTY.withColor(TextColor.fromRgb(MissionUIHelper.TOOLTIP_SUBTEXT_COLOR))
-                    .withItalic(true)));
+                tip.add(costPrefix.copy().append(costItem));
 
-            long owned = this.entity.getInventory().countItem(rerollitem);
-            if (owned < cappedCost) {
                 tip.add(Component.translatable(
-                        "gui.brassworksmissions.tooltip.not_enough", rerollstack.getHoverName()
+                        "gui.brassworksmissions.tooltip.cost_cap", rerollstack.getHoverName()
                                 .copy()
                                 .append(Component.translatable("gui.brassworksmissions.ui.plural_format"))
-                ).setStyle(Style.EMPTY.withColor(TextColor.fromRgb(MissionUIHelper.TOOLTIP_ERROR_COLOR))));
+                ).setStyle(Style.EMPTY.withColor(TextColor.fromRgb(MissionUIHelper.TOOLTIP_SUBTEXT_COLOR))
+                        .withItalic(true)));
+
+                long owned = this.entity.getInventory().countItem(rerollitem);
+                if (owned < rerollCost) {
+                    tip.add(Component.translatable(
+                            "gui.brassworksmissions.tooltip.not_enough", rerollstack.getHoverName()
+                                    .copy()
+                                    .append(Component.translatable("gui.brassworksmissions.ui.plural_format"))
+                    ).setStyle(Style.EMPTY.withColor(TextColor.fromRgb(MissionUIHelper.TOOLTIP_ERROR_COLOR))));
+                }
             }
 
             guiGraphics.renderComponentTooltip(font, tip, mouseX, mouseY);
@@ -429,7 +439,8 @@ public class UiScreen extends AbstractContainerScreen<UiMenu> {
             claimRewardsButton.active = MissionController.getTotalClaimableItemCount(entity) >= 1;
 
             if (mission != null) {
-                rerollButton.active = (playerVariables.reRollAmount * 2 <= 32) && !mission.isComplete();
+                int currentCost = playerVariables.reRollAmount > 2 ? (playerVariables.reRollAmount - 2) * 2 : 0;
+                rerollButton.active = (currentCost <= 32) && !mission.isComplete();
             }
 
             if (trackingIndicator != null && trackButton != null) {

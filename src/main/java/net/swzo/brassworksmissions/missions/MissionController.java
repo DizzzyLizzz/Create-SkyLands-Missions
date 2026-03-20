@@ -126,36 +126,47 @@ public class MissionController {
                     .withStyle(ChatFormatting.RED));
             return;
         }
+
         BrassworksmissionsModVariables.PlayerVariables playerVariables = player.getData(BrassworksmissionsModVariables.PLAYER_VARIABLES);
-        int rerollCost = playerVariables.reRollAmount * 2;
-        int cappedCost = Math.min(rerollCost, 32);
+        int rerollCost = 0;
+        if (playerVariables.reRollAmount > 2) {
+            rerollCost = (playerVariables.reRollAmount - 2) * 2;
+        }
+
         Item rerollitem = BrassworksmissionsMod.getRewardManager().getRewardItem().getItem();
         ItemStack rerollstack = new ItemStack(rerollitem);
-        if (playerVariables.reRollAmount * 2 > 32) {
+
+        if (rerollCost > 32) {
             player.sendSystemMessage(Component.translatable(
                     "gui.brassworksmissions.error.cost_cap_reached",
                     rerollstack.getHoverName().copy().append(Component.translatable("gui.brassworksmissions.ui.plural_format"))
             ).withStyle(ChatFormatting.RED));
             return;
         }
-        int playerOwned = player.getInventory().countItem(rerollitem);
-        if (playerOwned < cappedCost) {
+        if (rerollCost > 0) {
+            int playerOwned = player.getInventory().countItem(rerollitem);
+            if (playerOwned < rerollCost) {
+                player.sendSystemMessage(Component.translatable(
+                        "gui.brassworksmissions.error.not_enough",
+                        rerollCost,
+                        rerollstack.getHoverName().copy().append(Component.translatable("gui.brassworksmissions.ui.plural_format"))
+                ).withStyle(ChatFormatting.RED));
+                return;
+            }
+            player.getInventory().clearOrCountMatchingItems(
+                    stack -> stack.is(rerollitem), rerollCost, player.inventoryMenu.getCraftSlots()
+            );
+            player.inventoryMenu.broadcastChanges();
             player.sendSystemMessage(Component.translatable(
-                    "gui.brassworksmissions.error.not_enough",
-                    cappedCost,
+                    "gui.brassworksmissions.success.rerolled",
+                    rerollCost,
                     rerollstack.getHoverName().copy().append(Component.translatable("gui.brassworksmissions.ui.plural_format"))
-            ).withStyle(ChatFormatting.RED));
-            return;
+            ).withStyle(ChatFormatting.GREEN));
+        } else {
+            player.sendSystemMessage(Component.translatable(
+                    "gui.brassworksmissions.success.rerolled_free"
+            ).withStyle(ChatFormatting.GREEN));
         }
-        player.getInventory().clearOrCountMatchingItems(
-                stack -> stack.is(rerollitem), cappedCost, player.inventoryMenu.getCraftSlots()
-        );
-        player.inventoryMenu.broadcastChanges();
-        player.sendSystemMessage(Component.translatable(
-                "gui.brassworksmissions.success.rerolled",
-                cappedCost,
-                rerollstack.getHoverName().copy().append(Component.translatable("gui.brassworksmissions.ui.plural_format"))
-        ).withStyle(ChatFormatting.GREEN));
 
         playerVariables.reRollAmount++;
         playerVariables.syncPlayerVariables(player);

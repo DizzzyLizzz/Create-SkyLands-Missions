@@ -1,3 +1,3 @@
-### Added
+### Changed
 
-* Add mission hud scale config option.
+* Made the first two mission rerolls be free, and updated translations accordingly.

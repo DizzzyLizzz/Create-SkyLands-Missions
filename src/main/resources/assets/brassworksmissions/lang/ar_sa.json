@@ -54,6 +54,8 @@
   "gui.brassworksmissions.error.cost_cap_reached": "تكلفة التغيير وصلت حدها الأقصى 32 %s. ما تقدر تغير بعد.",
   "gui.brassworksmissions.error.not_enough": "تحتاج %s %s عشان تغير هالمهمة.",
   "gui.brassworksmissions.success.rerolled": "تم تغيير المهمة مقابل %s %s.",
+  "gui.brassworksmissions.tooltip.cost_free": "التكلفة: مجانًا",
+  "gui.brassworksmissions.success.rerolled_free": "تم تغيير المهمة مجانًا.",
 
   "mission.brassworksmissions.prefix.punctuation": ": ",
 
