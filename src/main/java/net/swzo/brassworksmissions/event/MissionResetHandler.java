@@ -18,6 +18,8 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static net.neoforged.neoforge.common.NeoForge.EVENT_BUS;
+
 @EventBusSubscriber(modid = BrassworksmissionsMod.MODID)
 public class MissionResetHandler {
 
@@ -114,6 +116,7 @@ public class MissionResetHandler {
             MissionController.reassignMissions(player);
             playerVariables.lastWeeklyResetTime = currentResetTime;
             playerVariables.syncPlayerVariables(player);
+            EVENT_BUS.post(new MissionEvent.Reset(player));
             return;
         }
 
@@ -122,6 +125,7 @@ public class MissionResetHandler {
             MissionController.reassignMissions(player);
             playerVariables.lastWeeklyResetTime = currentResetTime;
             playerVariables.syncPlayerVariables(player);
+            EVENT_BUS.post(new MissionEvent.Reset(player));
         }
     }
 }

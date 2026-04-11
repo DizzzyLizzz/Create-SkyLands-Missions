@@ -11,12 +11,16 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.common.NeoForge;
 import net.swzo.brassworksmissions.BrassworksmissionsMod;
+import net.swzo.brassworksmissions.event.MissionEvent;
 import net.swzo.brassworksmissions.init.CustomStats;
 import net.swzo.brassworksmissions.network.BrassworksmissionsModVariables;
 
 import javax.annotation.Nullable;
 import java.util.*;
+
+import static net.neoforged.neoforge.common.NeoForge.EVENT_BUS;
 
 public class MissionController {
 
@@ -177,8 +181,11 @@ public class MissionController {
         RandomSource random = player.getRandom();
         Mission missionTemplate = findUniqueMissionForSlot(player, slot, random);
         if (missionTemplate != null) {
-            data.setMission(slot, missionTemplate.createInstance(random));
+            ActiveMission newMission = missionTemplate.createInstance(random);
+            data.setMission(slot, newMission);
             playerVariables.syncPlayerVariables(player);
+
+            EVENT_BUS.post(new MissionEvent.Rerolled(player, newMission, slot, false));
         }
     }
 
@@ -191,9 +198,11 @@ public class MissionController {
         RandomSource random = player.getRandom();
         Mission missionTemplate = findUniqueMissionForSlot(player, slot, random);
         if (missionTemplate != null) {
-            data.setMission(slot, missionTemplate.createInstance(random));
-
+            ActiveMission newMission = missionTemplate.createInstance(random);
+            data.setMission(slot, newMission);
             player.getData(BrassworksmissionsModVariables.PLAYER_VARIABLES).syncPlayerVariables(player);
+
+            EVENT_BUS.post(new MissionEvent.Rerolled(player, newMission, slot, true));
         }
     }
 
@@ -217,10 +226,11 @@ public class MissionController {
         }
 
         int targetAmount = mission.getRequiredAmount();
-
         mission.setProgress(targetAmount);
 
         player.getData(BrassworksmissionsModVariables.PLAYER_VARIABLES).syncPlayerVariables(player);
+
+        EVENT_BUS.post(new MissionEvent.Completed(player, mission, slot));
         return true;
     }
 
@@ -245,6 +255,7 @@ public class MissionController {
         }
         player.awardStat(CustomStats.MISSIONS_COMPLETED.get());
         checkAndGrantAdvancements(player);
+        EVENT_BUS.post(new MissionEvent.RewardClaimed(player, mission, slot));
         return true;
     }
 

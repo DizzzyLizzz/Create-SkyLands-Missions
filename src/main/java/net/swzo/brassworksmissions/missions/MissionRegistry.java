@@ -8,10 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MissionRegistry {
-    private static final Map<String, IMissionType> missionTypes = new HashMap<>();
+    public static final Map<String, IMissionType> missionTypes = new HashMap<>();
 
     public static void registerMissionTypes() {
-
         register(new BreakBlockMissionType());
         register(new ReachExperienceLevelMissionType());
         register(new UseTotemMissionType());
@@ -40,7 +39,7 @@ public class MissionRegistry {
         register(new HarvesterMissionType());
     }
 
-    private static void register(IMissionType type) {
+    public static void register(IMissionType type) {
         if (missionTypes.containsKey(type.getId())) {
             throw new IllegalArgumentException("Duplicate mission type registered: " + type.getId());
         }

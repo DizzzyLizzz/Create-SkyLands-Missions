@@ -31,6 +31,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
+import static net.neoforged.neoforge.common.NeoForge.EVENT_BUS;
+
 @EventBusSubscriber(modid = BrassworksmissionsMod.MODID)
 public class MissionEventSubscriber {
 
@@ -45,7 +47,9 @@ public class MissionEventSubscriber {
             return;
         }
 
-        for (ActiveMission mission : missions) {
+        for (int slot = 0; slot < missions.length; slot++) {
+            ActiveMission mission = missions[slot];
+
             if (mission == null || mission.isComplete()) {
                 continue;
             }
@@ -53,6 +57,9 @@ public class MissionEventSubscriber {
             IMissionType type = MissionRegistry.getMissionType(mission.getMissionType());
             if (type != null && check.apply(type, mission)) {
                 needsSync = true;
+                if (mission.isComplete()) {
+                    EVENT_BUS.post(new MissionEvent.Completed(player, mission, slot));
+                }
             }
         }
 
